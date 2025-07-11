@@ -2,5 +2,12 @@
   "hello": "Hello",
   "login": "Login",
   "welcome": "Welcome to our app",
-  "home":"Home"
+  "home":"Home",
+  "mode":"mode",
+    "applications" :"Your Applications",
+    "Welcom Qutaiba on Apply to APP" :"Welcom Qutaiba on Apply to APP",
+    "Companys" :"Companys",
+    "profile" : "profile",
+     "setting" :  "setting" ,
+"Languge" : "Languge" 
 }
