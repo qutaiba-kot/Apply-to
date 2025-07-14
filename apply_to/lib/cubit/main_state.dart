@@ -1,7 +1,9 @@
+import 'package:equatable/equatable.dart';
+
 enum AppLanguage { ar, en }
 enum AppThemeMode { light, dark }
 
-class MainState {
+class MainState extends Equatable {
   final AppLanguage language;
   final AppThemeMode themeMode;
   final bool isLoggedIn;
@@ -47,4 +49,7 @@ class MainState {
       isLoggedIn: map['isLoggedIn'] ?? false,
     );
   }
+
+  @override
+  List<Object?> get props => [language, themeMode, isLoggedIn];
 }

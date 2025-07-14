@@ -1,7 +1,7 @@
 import 'package:apply_to/core/theme/app_theme.dart';
 import 'package:apply_to/cubit/main_cubit.dart';
 import 'package:apply_to/cubit/main_state.dart';
-import 'package:apply_to/feature/Home/presentation/pages/home_page.dart';
+import 'package:apply_to/feature/Home/presentation/home_page.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -18,16 +18,21 @@ void main() async {
         ? HydratedStorageDirectory.web
         : HydratedStorageDirectory((await getTemporaryDirectory()).path),
   );
+  print("rebuild ==================== void");
   runApp(
-    BlocProvider(
-      create: (_) => MainCubit(),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => MainCubit(),
+        ),
+      ],
       child: EasyLocalization(
         supportedLocales: const [Locale('en'), Locale('ar')],
         path: 'lib/core/utils/lang',
         fallbackLocale: const Locale('en'),
         child: const MyApp(),
       ),
-    ),
+    )
   );
 }
 
@@ -36,28 +41,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<MainCubit, MainState>(
-      listenWhen: (previous, current) => previous.language != current.language,
-      listener: (context, state) {
-        if (state.language == AppLanguage.ar &&
-            context.locale.languageCode != 'ar') {
-          context.setLocale(const Locale('ar'));
-        } else if (state.language == AppLanguage.en &&
-            context.locale.languageCode != 'en') {
-          context.setLocale(const Locale('en'));
-        }
-      },
-      child: ScreenUtilInit(
-        designSize: const Size(448, 997),
-        minTextAdapt: true,
-        builder: (context, child) {
-          return BlocBuilder<MainCubit, MainState>(
+    print("rebuild ==================== my app");
+    return ScreenUtilInit(
+      designSize: const Size(448, 997),
+      minTextAdapt: true,
+      builder: (context, child) {
+        return BlocListener<MainCubit, MainState>(
+          listener: (context, state) {
+            final newLocale = state.language == AppLanguage.ar
+                ? Locale('ar')
+                : Locale('en');
+            if (context.locale != newLocale) {
+              context.setLocale(newLocale);
+            }
+          },
+          child: BlocBuilder<MainCubit, MainState>(
             builder: (context, state) {
+              print("rebuild ==================== material app");
               return MaterialApp(
                 debugShowCheckedModeBanner: false,
                 localizationsDelegates: context.localizationDelegates,
                 supportedLocales: context.supportedLocales,
-                locale: context.locale,
+                locale: context.locale, // نخلي EasyLocalization هو المتحكم هنا
                 title: 'Flutter Demo',
                 theme: AppTheme.light,
                 darkTheme: AppTheme.dark,
@@ -67,9 +72,9 @@ class MyApp extends StatelessWidget {
                 home: const HomePage(),
               );
             },
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
